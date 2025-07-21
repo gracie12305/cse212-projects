@@ -22,7 +22,28 @@ public static class SetsAndMaps
     public static string[] FindPairs(string[] words)
     {
         // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        //here is my code
+
+        var wordSet = new HashSet<string>(words);
+        var result = new HashSet<string>();
+
+        foreach (var word in words)
+        {
+            if (word[0] == word[1]) continue; //this is to skip words like aa
+
+            string reversed = new string(new char[] { word[1], word[0] });
+
+            if (wordSet.Contains(reversed))
+            {
+                //use alphabetic order in order to avoid the duplictaes
+                string pair = string.Compare(word, reversed) < 0
+                    ?$"{word} & {reversed}"
+                    :$"{reversed} & {word}";
+
+                result.Add(pair);
+            }
+        }
+        return result.ToArray();
     }
 
     /// <summary>
@@ -43,6 +64,23 @@ public static class SetsAndMaps
         {
             var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
+            //here is my adde code
+
+            if(fields.Length >= 4)
+            {
+                string degree = fields[3].Trim(); 
+
+                if (!degrees.ContainsKey(degree))
+                {
+                    degrees[degree] = 1;
+
+                }
+                else
+                {
+                    degrees[degree] ++;
+
+                }
+            }
         }
 
         return degrees;
@@ -67,7 +105,36 @@ public static class SetsAndMaps
     public static bool IsAnagram(string word1, string word2)
     {
         // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        //here is my code
+
+        string clean1 = new string(word1.ToLower().Where(char.IsLetter).ToArray());
+        string clean2 = new string(word2.ToLower().Where(char.IsLetter).ToArray());
+
+        if (clean1.Length != clean2.Length)
+            return false;
+
+        var charCount = new Dictionary<char, int>();
+
+        foreach (char c in clean1)
+        {
+            if (!charCount.ContainsKey(c))
+                charCount[c] = 1;
+            else
+                charCount[c]++;
+        }
+
+        foreach (char c in clean2)
+        {
+            if (!charCount.ContainsKey(c))
+                return false;
+
+            charCount[c]--;
+
+            if (charCount[c] < 0)
+                return false;
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -101,6 +168,22 @@ public static class SetsAndMaps
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+
+        if (featureCollection?.Features == null)
+            return Array.Empty<string>();
+
+        var result = new List<string>();
+
+        foreach (var feature in featureCollection.Features)
+        {
+            var place = feature.Properties?.Place;
+            var mag = feature.Properties?.Mag;
+
+            if (!string.IsNullOrWhiteSpace(place) && mag.HasValue)
+            {
+                result.Add($"{place} - Mag {mag.Value}" );
+            }
+        }
+        return result.ToArray();
     }
 }
